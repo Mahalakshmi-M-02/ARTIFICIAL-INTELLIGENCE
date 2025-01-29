@@ -1,0 +1,46 @@
+from transformers import pipeline
+
+# Load a pre-trained summarization model from Hugging Face
+def initialize_summarizer():
+    return pipeline("summarization", model="facebook/bart-large-cnn")
+
+# Summarize the given text
+def summarize_text(text, summarizer, max_length=130, min_length=30):
+    if not text.strip():
+        raise ValueError("Input text cannot be empty.")
+
+    # Perform summarization
+    summary = summarizer(
+        text,
+        max_length=max_length,
+        min_length=min_length,
+        do_sample=False
+    )
+
+    return summary[0]['summary_text']
+
+if __name__ == "__main__":
+    # Sample lengthy text for summarization
+    input_text = (
+        "Artificial intelligence (AI) is intelligence demonstrated by machines, in contrast to the natural "
+        "intelligence displayed by humans and animals. Leading AI textbooks define the field as the study of "
+        "intelligent agents: any system that perceives its environment and takes actions that maximize its chance "
+        "of achieving its goals. AI applications include advanced web search engines, recommendation systems, "
+        "understanding human speech, autonomous vehicles, and automated decision-making systems. While AI holds "
+        "the promise of improving efficiency and decision-making, it also raises concerns regarding ethics, job "
+        "displacement, and privacy issues. As the field rapidly evolves, the impact of AI on society and industry "
+        "is expected to grow exponentially."
+    )
+
+    # Initialize the summarizer model
+    summarizer = initialize_summarizer()
+
+    # Get the summary of the input text
+    try:
+        summary = summarize_text(input_text, summarizer)
+        print("Original Text:")
+        print(input_text)
+        print("\nSummarized Text:")
+        print(summary)
+    except ValueError as e:
+        print(str(e))
